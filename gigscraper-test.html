@@ -1,0 +1,32 @@
+<html>
+<head>
+	<title>GIGSCRAPER test page</title>
+	<script src="lib/jquery.js"></script>
+	<script src="gigscraper.js"></script>
+	<script>
+		jQuery(function($) {
+			$("#listings").gigscraper("44063861");
+		});
+	</script>
+	<style type="text/css">
+	body {
+		color:#FBF8C3;
+		font:12px/20px "Lucida Grande",Arial,sans-serif;
+		text-shadow:1px 1px 2px black;
+		background: #2B2B2B;
+	}
+	th, td {
+		font-size: 12px;
+		padding: 0.5em;
+		border-bottom: 1px solid #666;
+		text-align: left;
+	}
+	th {
+		text-align: right;
+	}
+	</style>
+</head>
+<body>
+	<div id="listings"></div>
+</body>
+</html>
