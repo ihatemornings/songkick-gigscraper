@@ -45,6 +45,8 @@ if (file_exists($file)) { // read from cache file
 		$item['title'] = $v->find('a.event-title span',0)->plaintext;
 	
 		$item['info'] = $v->find('div.event-titleinfo span span',0)->plaintext;
+		
+		$item['ticketlink'] = $v->find('a.ticketFindLink',0)->href;
 	
 		$rawdate = $v->find('div.event-cal',0)->plaintext;
 		$rawdatebits = explode(" @ ", $rawdate, 2);
