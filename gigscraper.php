@@ -4,7 +4,18 @@ include('lib/simple_html_dom.php');
 
 /* Parameters */
 
-$format = (isset($_GET['format']) && $_GET['format'] == "json") ? "json" : "html";
+if (isset($_GET['format'])) {
+	switch ($_GET['format']) {
+		case "ical":
+			$format = "ical";
+			break;
+		case "html":
+			$format = "html";
+			break;
+		default:
+			$format = "json";
+	}
+}
 
 $myspace_id = (isset($_GET['id']) && $_GET['id'] != "") ? $_GET['id'] : "44063861";
 
@@ -58,7 +69,7 @@ if (file_exists($file)) { // read from cache file
 		} else {
 			$item['timestamp'] = '';
 			$item['dtstart'] = '';
-			$item['dtstart'] = '';
+			$item['dtend'] = '';
 			$item['date'] = $datebits[1];
 		}
 		$item['time'] = $datebits[3];
@@ -125,5 +136,28 @@ END;
 		chgrp($file, "www-data");
 		
 		break;
+	
+	case "ical":
+	
+		$calfilename = "littlefishgigs.ics";
+		header("Content-Type: text/Calendar");
+		header("Content-Disposition: inline; filename=$calfilename");
+		?>
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ihatemornings//gigscraper//EN
+X-WR-CALNAME:Little Fish gigs
+X-ORIGINAL-URL:http://littlefish.com/gigs
+X-PUBLISHED-TTL:86400
+TZ:00
+<?php foreach ($shows as $show) { ?>
+BEGIN:VEVENT
+SUMMARY:Little Fish @ <?php echo $show['info'] . "\n"; ?>
+DTSTART:<?php echo date("Ymd\THi00", $show['timestamp']) . "\n"; ?>
+DTEND:<?php echo date("Ymd\THi00", $show['timestamp'] + 10800) . "\n"; ?>
+END:VEVENT
+<?php } ?>
+END:VCALENDAR
+<?php break;
 }
 ?>

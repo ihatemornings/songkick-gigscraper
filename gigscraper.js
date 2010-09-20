@@ -23,7 +23,7 @@
 						}
 					}
 					var ticketlink = (data[i].ticketlink) ? ', <a href="' + data[i].ticketlink + '">buy tickets</a>' : '';
-					$o.append('<tr class="vevent"><th>' + data[i].date + '</th><td><span class="summary">' + summary + '</span>, <span class="location">' + location + '</span><br /><span class="meta">' + data[i].time + ' start' + ticketlink + '</span></td></tr>');
+					$o.append('<tr class="vevent"><th>' + data[i].date + '</th><td><span class="summary">' + summary + '</span>, <span class="location">' + location + '</span><br /><span class="meta"><abbr class="dtstart" title="' + data[i].dtstart + '">' + data[i].time + '</abbr> <abbr class="dtend" title="' + data[i].dtend + '">start</abbr>' + ticketlink + '</span></td></tr>');
 				}
 				$listing.empty().append($o);
 			});
