@@ -3,7 +3,7 @@
 	$.fn.gigscraper = function(myspace_id, options) {
 		
 		settings = jQuery.extend({
-			php_url: "http://secondhead.co.uk/gigscraper/v3/gigscraper.php"
+			php_url: "http://secondhead.co.uk/gigscraper/gigscraper.php"
 		}, options);
 		
 		return this.each(function() {
