@@ -41,22 +41,27 @@ if (file_exists($file)) { // read from cache file
 
 	// Use simplehtmldom to scrape gig listings into an array
 	foreach ($html->find('#home-rec-events .eventitem') as $v) {
-	
+		
 		$item['title'] = $v->find('a.event-title span',0)->plaintext;
-	
+		
 		$item['info'] = $v->find('div.event-titleinfo span span',0)->plaintext;
 		
 		$item['ticketlink'] = $v->find('a.ticketFindLink',0)->href;
-	
+		
 		$rawdate = $v->find('div.event-cal',0)->plaintext;
-		$rawdatebits = explode(" @ ", $rawdate, 2);
-		$justthedate = $rawdatebits[0];
-		if ($timestamp = strtotime($justthedate)) {
+		preg_match("/(.*), (.*) @ (.*)/i", $rawdate, $datebits);
+		if ($timestamp = strtotime($datebits[2] . $datebits[3])) {
+			$item['timestamp'] = $timestamp;
+			$item['dtstart'] = date(DATE_ISO8601, $timestamp);
+			$item['dtend'] = date(DATE_ISO8601, $timestamp + 10800);
 			$item['date'] = date("D d M", $timestamp);
 		} else {
-			$item['date'] = $justthedate;
+			$item['timestamp'] = '';
+			$item['dtstart'] = '';
+			$item['dtstart'] = '';
+			$item['date'] = $datebits[1];
 		}
-		$item['time'] = $rawdatebits[1];
+		$item['time'] = $datebits[3];
 		
 		$shows[] = $item;
 	}
