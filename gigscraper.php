@@ -60,8 +60,20 @@ if (file_exists($file)) { // read from cache file
 		$item['ticketlink'] = $v->find('a.ticketFindLink',0)->href;
 		
 		$rawdate = $v->find('div.event-cal',0)->plaintext;
-		preg_match("/(.*), (.*) @ (.*)/i", $rawdate, $datebits);
-		if ($timestamp = strtotime($datebits[2] . $datebits[3])) {
+		
+		if (preg_match("/(.*), (.*) @ (.*)/i", $rawdate, $datebits)) {
+			
+			$timestamp = strtotime($datebits[2] . $datebits[3]);
+			$item['time'] = $datebits[3];
+			
+		} elseif (preg_match("/(.*) @ (.*)/i", $rawdate, $datebits)) {
+			
+			// When date is 'Today' or 'Tomorrow'
+			$timestamp = strtotime($datebits[1] . $datebits[2]);
+			$item['time'] = $datebits[2];
+			
+		}
+		if ($timestamp) {
 			$item['timestamp'] = $timestamp;
 			$item['dtstart'] = date(DATE_ISO8601, $timestamp);
 			$item['dtend'] = date(DATE_ISO8601, $timestamp + 10800);
@@ -70,9 +82,9 @@ if (file_exists($file)) { // read from cache file
 			$item['timestamp'] = '';
 			$item['dtstart'] = '';
 			$item['dtend'] = '';
-			$item['date'] = $datebits[1];
+			$item['date'] = '';
+			$item['time'] = '';
 		}
-		$item['time'] = $datebits[3];
 		
 		$shows[] = $item;
 	}
