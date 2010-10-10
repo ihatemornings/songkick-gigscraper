@@ -20,7 +20,6 @@ Lots! This is a script I've knocked together for the Little Fish site, and as su
 
 Off the top of my head, here are a few issues that I would like to address at some point:
 
-* Only the first page of Myspace event listings are scraped and cached.
 * Old events are not saved, and it looks like the new Myspace events setup doesn't let you access past events either, so a way of saving old records in the cache would be very useful. For most bands, the Myspace listings <del>are</del> were the only complete gig record they <del>have</del> had.
 * The date and listing formats are hard coded. A simple template for these would be nice, although it's easy enough to edit `gigscraper.js`.
 * It would be nice to offer this as a service, but I can't guarantee the uptime and I don't have the time and skills to offer support. If you fancy it, go ahead!
