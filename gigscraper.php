@@ -2,7 +2,14 @@
 
 include('lib/simple_html_dom.php');
 
+/* Set $debugging to true and load gigscraper.php directly in the browser
+/* for some very basic "You are here" messages
+/*/
+$debugging = false;
+
 /* Parameters */
+
+$cache_expire = 3600; // seconds
 
 if (isset($_GET['format'])) {
 	switch ($_GET['format']) {
@@ -19,35 +26,75 @@ if (isset($_GET['format'])) {
 
 $myspace_id = (isset($_GET['id']) && $_GET['id'] != "") ? $_GET['id'] : "44063861";
 
-/* Cache */
-
 // Cache file stored as JSON
 $file = "./cache/" . $myspace_id . ".json";
+$cache_exists =  (file_exists($file));
+$cache_expired = ( (filemtime($file) + $cache_expire) < time() );
 
-// If the cache file is over an hour old, delete it
-$cache_expire = 3600;
-if ($dir = opendir("./cache")) {
-	while ($f = readdir($dir)) {
-		$ts = filemtime('./cache/' . $f);
-		$now = time();
-		if ( substr($f, -5) == '.json' && ((filemtime('./cache/' . $f) + $cache_expire) < time()) ) {
-			unlink('./cache/' . $f);
-		}
-	}
-}
-
-if (file_exists($file)) { // read from cache file
+if ($cache_exists) {
+	
+	if ($debugging) echo "<p>Reading cache...</p>";
 	
 	$response = file_get_contents($file);
-	$shows = json_decode($response, true);
+	$cached_shows = json_decode($response, true);
 	
-} else { // scrape the Myspace page
+	if ($cache_expired) {
+		
+		$scraped_shows = scrape($myspace_id);
+		$shows = array();
+	
+		if ($debugging) echo "<p>Updating cached shows with new Myspace results...";
+		
+		foreach ($cached_shows as $show) {
+			// Load old shows from cache file
+			if ($show['timestamp'] < time()) $shows[] = $show;
+		}
+		foreach ($scraped_shows as $show) {
+			// Load new shows from Myspace
+			if ($show['timestamp'] > time()) $shows[] = $show;
+		}
+		
+		write_cache($file, $shows);
+		
+	} else {
+		
+		$shows = $cached_shows;
+		
+	}
+	
+} else {
+	
+	$shows = scrape($myspace_id);
+	
+	write_cache($file, $shows);
+	
+}
+
+display_shows($shows, $format);
+
+/*
+/* FUNCTIONS
+/*/
+
+function write_cache($file, $shows) {
+	
+	global $debugging; if ($debugging) echo "<p>Writing cache...</p>";
+	
+	$output = json_encode($shows);
+	$fstream = fopen($file, "w");
+	$result = fwrite($fstream, $output);
+	fclose($fstream);
+	chgrp($file, "www-data");
+}
+
+function scrape($myspace_id) {
+	
+	global $debugging; if ($debugging) echo "<p>Scraping Myspace...</p>";
 	
 	ini_set('user_agent', 'Scrape/2.5');
 	$pageCount = 0;
-
-	do
-	{
+	
+	do {
 		$gotResults = false;
 		$pageCount++;
 		$html = file_get_html("http://events.myspace.com/$myspace_id/Events/$pageCount");
@@ -96,13 +143,17 @@ if (file_exists($file)) { // read from cache file
 		}
 	}
 	while ($gotResults);
+	
+	return $shows;
 }
 
-switch($format) {
+function display_shows($shows, $format = "html") {
 	
-	case "html": // basic formatting, mainly for testing
+	switch($format) {
+	
+		case "html": // basic formatting, mainly for testing
 		
-		echo <<< END
+			echo <<< END
 		<html>
 		<head>
 		<style type="text/css">
@@ -121,47 +172,40 @@ switch($format) {
 		</head>
 		<body>
 END;
+			
+			echo '<table id="giglisting" cellspacing="0" cellpadding="0">' . "\n";
 		
-		echo '<table id="giglisting" cellspacing="0" cellpadding="0">' . "\n";
+			foreach ($shows as $show) {
+				echo '<tr><td>' . $show['date'] . '</td><td>' . $show['info'] . '</td></tr>' . "\n";
+			}
 		
-		foreach ($shows as $show) {
-			echo '<tr><td>' . $show['date'] . '</td><td>' . $show['info'] . '</td></tr>' . "\n";
-		}
+			echo '</table>' . "\n";
 		
-		echo '</table>' . "\n";
-		
-		echo <<< END
+			echo <<< END
 		</body>
 		</html>
 END;
-		break;
+			break;
+		
+		case "json":
+		
+			$callback = (isset($_GET['callback']) && $_GET['callback'] != "?") ? true : false;
+			header('Content-type: application/json');
+		
+			$response = json_encode($shows);
+		
+			// Write the JSON file
+			if ($callback) echo $_GET['callback'] . "(";
+			echo $response;
+			if ($callback) echo ")";
+			break;
 	
-	case "json":
-		
-		$callback = (isset($_GET['callback']) && $_GET['callback'] != "?") ? true : false;
-		header('Content-type: application/json');
-		
-		$response = json_encode($shows);
-		
-		// Write the JSON file
-		if ($callback) echo $_GET['callback'] . "(";
-		echo $response;
-		if ($callback) echo ")";
-		
-		// Write the cache file
-		$fstream = fopen($file, "w");
-		$result = fwrite($fstream, $response);
-		fclose($fstream);
-		chgrp($file, "www-data");
-		
-		break;
+		case "ical":
 	
-	case "ical":
-	
-		$calfilename = "littlefishgigs.ics";
-		header("Content-Type: text/Calendar");
-		header("Content-Disposition: inline; filename=$calfilename");
-		?>
+			$calfilename = "littlefishgigs.ics";
+			header("Content-Type: text/Calendar");
+			header("Content-Disposition: inline; filename=$calfilename");
+			?>
 BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//ihatemornings//gigscraper//EN
@@ -177,6 +221,11 @@ DTEND:<?php echo date("Ymd\THi00", $show['timestamp'] + 10800) . "\n"; ?>
 END:VEVENT
 <?php } ?>
 END:VCALENDAR
-<?php break;
+<?php
+			break;
+		
+	}
+	
 }
+
 ?>
