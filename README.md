@@ -14,13 +14,18 @@ Because the site is built on Tumblr, I've hosted the Javascript and PHP files ex
 
 Have a look at `gigscraper-test.html` for an example.
 
+## Archiving and formats ##
+
+Myspace recently stopped archiving old shows. This is a nightmare. Because of this, the script now keeps old shows in the cache file, adding or updating new ones every time it scrapes.
+
+The PHP script will output HTML, JSON or ICAL formats. HTML is mostly for testing. JSON is the one you'll use to load gigs onto your page. You can subscribe to the ICAL feed (just add `&format=ical` to the end of the script URL) on your iPhone or your desktop calendar, so when the guitarist adds a new date to Myspace and forgets to tell the band you'll be one step ahead.
+
 ## To Do ##
 
 Lots! This is a script I've knocked together for the Little Fish site, and as such it's not particularly robust, flexible or secure. It's probably just about complete enough for you to chuck it on your server and get it working with minimal tinkering. Feel free to branch it and make it good.
 
 Off the top of my head, here are a few issues that I would like to address at some point:
 
-* Old events are not saved, and it looks like the new Myspace events setup doesn't let you access past events either, so a way of saving old records in the cache would be very useful. For most bands, the Myspace listings <del>are</del> were the only complete gig record they <del>have</del> had.
 * The date and listing formats are hard coded. A simple template for these would be nice, although it's easy enough to edit `gigscraper.js`.
 * It would be nice to offer this as a service, but I can't guarantee the uptime and I don't have the time and skills to offer support. If you fancy it, go ahead!
 
