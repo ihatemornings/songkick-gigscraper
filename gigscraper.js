@@ -52,7 +52,6 @@
 					// Sort out date and time
 					var event_time = events[i].start.time ? events[i].start.time : "20:00";
 					var event_date_object = parseDate(events[i].start.date, event_time);
-					log(events[i].start.date);
 					var event_dtstart = format_iso8601(event_date_object);
 					event_time = leadingZeros(event_date_object.getHours(), 2, "0") + ":" + leadingZeros(event_date_object.getMinutes(), 2, "0");
 					event_date_object.setHours(event_date_object.getHours() + 3);
