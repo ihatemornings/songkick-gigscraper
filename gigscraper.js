@@ -45,9 +45,23 @@
 				for(var i in events) {
 					
 					// Get the basic info
-					var event_summary = events[i].venue.displayName;
+					var event_venue = events[i].venue.displayName;
 					var event_location = events[i].venue.metroArea.displayName;
 					var event_ticketlink = events[i].uri.replace(/\\\//g, "/");
+					
+					var event_headliners = '';
+					var event_supports = '';
+					
+					for (var j in events[i].performance) {
+						var a = events[i].performance[j];
+						if (a.billing == 'headline') {
+							if (event_headliners != '') event_headliners += '<br />';
+							event_headliners += a.displayName;
+						} else {
+							if (event_supports != '') event_supports += '<br />';
+							event_supports += a.displayName;
+						}
+					}
 					
 					// Sort out date and time
 					var event_time = events[i].start.time ? events[i].start.time : "20:00";
@@ -61,7 +75,12 @@
 					var event_day_of_month = leadingZeros(event_date_object.getDate(), 2, "0");
 					
 					// Add the gig to the list
-					$o.append('<tr class="vevent"><th><span class="month">' + event_month + '</span> <span class="day">' + event_day_of_month + '</span></th><td><a href="' + event_ticketlink + '"><span class="summary">' + event_summary + '</span>, <span class="location">' + event_location + '</span></a><br /><span class="meta"><abbr class="dtstart" title="' + event_dtstart + '">' + event_time + '</abbr> <abbr class="dtend" title="' + event_dtend + '">start</abbr></span></td></tr>');
+					var output = '<tr class="vevent">';
+					output += '<th><abbr class="dtstart month" title="' + event_dtstart + '">' + event_month + '</abbr> <abbr class="dtend day" title="' + event_dtend + '">' + event_day_of_month + '</abbr></th>';
+					output += '<td class="bands"><a href="' + event_ticketlink + '"><span class="headliners summary">' + event_headliners + '</span><br />' + event_supports + '</a></td>';
+					output += '<td><span class="location"><span class="venue">' + event_venue + '</span><br />' + event_location + '</span></td>';
+					output += '</tr>';
+					$o.append(output);
 				}
 				$listing.empty().append($o).removeClass("loading");
 			});
