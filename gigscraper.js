@@ -77,7 +77,7 @@
 					// Add the gig to the list
 					var output = '<tr class="vevent">';
 					output += '<th><abbr class="dtstart month" title="' + event_dtstart + '">' + event_month + '</abbr> <abbr class="dtend day" title="' + event_dtend + '">' + event_day_of_month + '</abbr></th>';
-					output += '<td class="bands"><a href="' + event_ticketlink + '"><span class="headliners summary">' + event_headliners + '</span><br />' + event_supports + '</a></td>';
+					output += '<td class="bands"><a href="' + event_ticketlink + '"><span class="headliners summary">' + event_headliners + '</span><br /><span class="supports">' + event_supports + '</span></a></td>';
 					output += '<td><span class="location"><span class="venue">' + event_venue + '</span><br />' + event_location + '</span></td>';
 					output += '</tr>';
 					$o.append(output);
