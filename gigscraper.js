@@ -45,7 +45,12 @@
 				for(var i in events) {
 					
 					// Get the basic info
-					var event_venue = events[i].venue.displayName;
+					if (events[i].type == "Festival") {
+						var event_venue = events[i].displayName;
+					} else {
+						var event_venue = events[i].venue.displayName;
+					}
+					
 					var event_location = events[i].venue.metroArea.displayName;
 					var event_ticketlink = events[i].uri.replace(/\\\//g, "/");
 					
@@ -55,13 +60,17 @@
 					for (var j in events[i].performance) {
 						var a = events[i].performance[j];
 						if (a.billing == 'headline') {
-							if (event_headliners != '') event_headliners += '<br />';
-							event_headliners += a.displayName;
+							if (events[i].type == "Concert" || j < 3) {
+								if (event_headliners != '') event_headliners += '<br />';
+								event_headliners += a.displayName;
+							}
 						} else {
 							if (event_supports != '') event_supports += '<br />';
 							event_supports += a.displayName;
 						}
 					}
+					
+					if (events[i].type == "Festival") event_supports += 'etc&hellip;';
 					
 					// Sort out date and time
 					var event_time = events[i].start.time ? events[i].start.time : "20:00";
