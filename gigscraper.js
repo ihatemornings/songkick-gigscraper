@@ -77,15 +77,19 @@
 					var event_date_object = parseDate(events[i].start.date, event_time);
 					var event_dtstart = format_iso8601(event_date_object);
 					event_time = leadingZeros(event_date_object.getHours(), 2, "0") + ":" + leadingZeros(event_date_object.getMinutes(), 2, "0");
-					event_date_object.setHours(event_date_object.getHours() + 3);
-					var event_dtend = format_iso8601(event_date_object);
-					var event_date = event_date_object.toDateString();
 					var event_month = month_text[event_date_object.getMonth()];
 					var event_day_of_month = leadingZeros(event_date_object.getDate(), 2, "0");
+					event_date_object.setHours(event_date_object.getHours() + 3);
+					var event_dtend = format_iso8601(event_date_object);
+					var event_end_date = "";
+					if (events[i].type == "Festival") {
+						event_date_object = parseDate(events[i].end.date, event_time);
+						event_end_date = " &ndash; " + leadingZeros(event_date_object.getDate(), 2, "0");
+					}
 					
 					// Add the gig to the list
 					var output = '<tr class="vevent">';
-					output += '<th><abbr class="dtstart month" title="' + event_dtstart + '">' + event_month + '</abbr> <abbr class="dtend day" title="' + event_dtend + '">' + event_day_of_month + '</abbr></th>';
+					output += '<th><abbr class="dtstart month" title="' + event_dtstart + '">' + event_month + '</abbr> <abbr class="dtend day" title="' + event_dtend + '">' + event_day_of_month + event_end_date + '</abbr></th>';
 					output += '<td class="bands"><a href="' + event_ticketlink + '"><span class="headliners summary">' + event_headliners + '</span><br /><span class="supports">' + event_supports + '</span></a></td>';
 					output += '<td><span class="location"><span class="venue">' + event_venue + '</span><br />' + event_location + '</span></td>';
 					output += '</tr>';
