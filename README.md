@@ -9,7 +9,7 @@ I use it to display the gigs on [the gigs page of the Little Fish website](http:
 3. Call the plugin on an element in the page: `$("#listings").gigscraper("12345678","ABCDEFG");`, where 12345678 is your SongKick Artist ID and ABCDEFG is your SongKick API key. You can get a key from the [SongKick developers site](http://www.songkick.com/developer).
 4. Have a quick read of the [Songkick API terms of use](http://www.songkick.com/developer/api-terms-of-use) and pick a logo from that page to add to your design (that's part of the deal).
 
-Have a look at `gigscraper-test.html` for an example.
+Have a look at `gigscraper-test.html` for an example, and check out a [live example on my server](http://secondhead.co.uk/gigscraper/gigscraper-test.html).
 
 ## To Do ##
 
