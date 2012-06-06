@@ -38,8 +38,9 @@
 			var $listing = $(this);
 			
 			$listing.append("<p>Loading gigs...</p>").addClass("loading");
+			
 			$.getJSON("http://api.songkick.com/api/3.0/artists/" + songkick_id + "/calendar.json?apikey=" + api_key + "&jsoncallback=?", function(data) {
-				$o = $("<table><tbody></tbody></table>");
+				var o = "";
 				var events = data.resultsPage.results.event;
 				var month_text = new Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 				for(var i in events) {
@@ -93,14 +94,15 @@
 					output += '<td class="bands"><a href="' + event_ticketlink + '"><span class="headliners summary">' + event_headliners + '</span><br /><span class="supports">' + event_supports + '</span></a></td>';
 					output += '<td><span class="location"><span class="venue">' + event_venue + '</span><br />' + event_location + '</span></td>';
 					output += '</tr>';
-					$o.append(output);
+					o += output;
 				}
-				$listing.empty().append($o).removeClass("loading");
+				if (o === "") {
+					$listing.empty().append("<p>No upcoming gigs.</p>");
+				} else {
+					$o = $(o).wrapAll("<table><tbody></tbody></table>");
+					$listing.empty().append($o).removeClass("loading");
+				}
 			});
-			if ($listing.hasClass("loading")) {
-				$listing.empty().append("<p>No upcoming gigs.</p>");
-			}
-			
 		});
 	}
 })(jQuery);
