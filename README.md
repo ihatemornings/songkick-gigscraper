@@ -2,6 +2,8 @@ This used to be a Myspace gig scraper. But Myspace kept changing their event lis
 
 I use it to display the gigs on [the gigs page of the Little Fish website](http://littlefishmusic.com/gigs).
 
+**UPDATE** Songkick have recently launched [Tourbox](http://tourbox.songkick.com/), which offers bands a listings widget very much like this one. I haven't had time to try it out yet, but if it's half-decent I'll probably stop supporting this plugin.
+
 ## Installation ##
 
 1. Include jQuery in the calling page. I recommend Google hosted jQuery, like so: `<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>`.
